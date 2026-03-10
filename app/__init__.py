@@ -48,9 +48,14 @@ def create_app(config_class=Config):
 
     @app.context_processor
     def inject_categories():
-        from app.models import Category
-        categories = Category.query.filter_by(is_active=True).all()
-        return dict(nav_categories=categories)
+        try:
+            from app.models import Category
+            categories = Category.query.filter_by(is_active=True).all()
+            return dict(nav_categories=categories)
+        except Exception as e:
+            # In case database is not available during initialization
+            print(f"Warning: Could not load categories: {e}")
+            return dict(nav_categories=[])
 
     # Only create tables in development or when explicitly requested
     if not os.environ.get('VERCEL') and not os.environ.get('FLASK_ENV') == 'production':
