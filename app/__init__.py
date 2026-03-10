@@ -1,19 +1,22 @@
 import os
 from flask import Flask
 from config import Config
-from app.extensions import db, login_manager, csrf, migrate
+from app.extensions import db, login_manager, csrf
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Create upload folder only if filesystem is writable
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    except OSError:
+        pass
 
     db.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
-    migrate.init_app(app, db)
 
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
@@ -39,11 +42,14 @@ def create_app(config_class=Config):
         from flask_login import current_user
         from flask import session
         count = 0
-        if current_user.is_authenticated:
-            from app.models import CartItem
-            count = CartItem.query.filter_by(user_id=current_user.id).count()
-        elif 'cart' in session:
-            count = len(session['cart'])
+        try:
+            if current_user.is_authenticated:
+                from app.models import CartItem
+                count = CartItem.query.filter_by(user_id=current_user.id).count()
+            elif 'cart' in session:
+                count = len(session['cart'])
+        except Exception:
+            pass
         return dict(cart_count=count)
 
     @app.context_processor
@@ -52,17 +58,15 @@ def create_app(config_class=Config):
             from app.models import Category
             categories = Category.query.filter_by(is_active=True).all()
             return dict(nav_categories=categories)
-        except Exception as e:
-            # In case database is not available during initialization
-            print(f"Warning: Could not load categories: {e}")
+        except Exception:
             return dict(nav_categories=[])
 
-    # Only create tables in development or when explicitly requested
-    if not os.environ.get('VERCEL') and not os.environ.get('FLASK_ENV') == 'production':
+    # Create tables only in local development
+    if not os.environ.get('VERCEL'):
         with app.app_context():
             try:
                 db.create_all()
-            except Exception as e:
-                print(f"Warning: Could not create database tables: {e}")
+            except Exception:
+                pass
 
     return app

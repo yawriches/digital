@@ -2,24 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/app.py",
+      "src": "wsgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "app/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "api/app.py"
+      "dest": "wsgi.py"
     }
-  ],
-  "env": {
-    "FLASK_ENV": "production",
-    "PYTHONPATH": "."
-  },
-  "functions": {
-    "api/app.py": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  }
+  ]
 }

@@ -1,12 +1,5 @@
-#!/usr/bin/env python3
-"""
-Index Entry Point for Smart Watches E-commerce Platform
-Some deployment platforms look for index.py as the entry point.
-"""
-
 from app import create_app
 
-# Create the Flask application instance
 app = create_app()
 
 if __name__ == '__main__':
