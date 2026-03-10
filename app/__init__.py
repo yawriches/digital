@@ -52,7 +52,12 @@ def create_app(config_class=Config):
         categories = Category.query.filter_by(is_active=True).all()
         return dict(nav_categories=categories)
 
-    with app.app_context():
-        db.create_all()
+    # Only create tables in development or when explicitly requested
+    if not os.environ.get('VERCEL') and not os.environ.get('FLASK_ENV') == 'production':
+        with app.app_context():
+            try:
+                db.create_all()
+            except Exception as e:
+                print(f"Warning: Could not create database tables: {e}")
 
     return app
