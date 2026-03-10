@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-label">Precision Engineered</div>
+            <h1 class="hero-title">Where Technology Meets <em>Timeless</em> Elegance</h1>
+            <p class="hero-desc">Discover our curated collection of premium smart watches — designed for those who refuse to compromise between innovation and sophistication.</p>
+            <div class="hero-actions">
+                <a href="{{ url_for('main.shop') }}" class="btn btn-primary btn-lg">Explore Collection</a>
+                <a href="#featured" class="btn btn-outline btn-lg">Featured Pieces</a>
+            </div>
+        </div>
+    </div>
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80" alt="Premium Smart Watch">
+    </div>
+</section>
+
+<!-- Features Bar -->
+<div class="features-bar">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item animate-on-scroll">
+                <div class="feature-icon">&#9201;</div>
+                <div class="feature-title">Premium Quality</div>
+                <div class="feature-desc">Crafted with precision materials</div>
+            </div>
+            <div class="feature-item animate-on-scroll">
+                <div class="feature-icon">&#128666;</div>
+                <div class="feature-title">Free Shipping</div>
+                <div class="feature-desc">On orders over $500</div>
+            </div>
+            <div class="feature-item animate-on-scroll">
+                <div class="feature-icon">&#128274;</div>
+                <div class="feature-title">Secure Payment</div>
+                <div class="feature-desc">100% secure transactions</div>
+            </div>
+            <div class="feature-item animate-on-scroll">
+                <div class="feature-icon">&#9889;</div>
+                <div class="feature-title">24/7 Support</div>
+                <div class="feature-desc">Dedicated customer service</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Collections</div>
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-subtitle">Find the perfect timepiece for every occasion</p>
+        </div>
+        <div class="categories-grid">
+            {% for cat in categories %}
+            <a href="{{ url_for('main.shop', category=cat.slug) }}" class="category-card animate-on-scroll">
+                <img src="{{ cat.image_url or 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&q=80' }}" alt="{{ cat.name }}">
+                <div class="category-card-overlay">
+                    <div class="category-card-name">{{ cat.name }}</div>
+                    <div class="category-card-count">{{ cat.products.count() }} Products</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="section" id="featured" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Curated Selection</div>
+            <h2 class="section-title">Featured Timepieces</h2>
+            <p class="section-subtitle">Our most coveted pieces, chosen by our master curators</p>
+        </div>
+        <div class="product-grid">
+            {% for product in featured %}
+            <div class="product-card animate-on-scroll">
+                <div class="product-card-img">
+                    <a href="{{ url_for('main.product_detail', slug=product.slug) }}">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                    </a>
+                    {% if product.discount_percent > 0 %}
+                    <span class="product-badge">-{{ product.discount_percent }}%</span>
+                    {% endif %}
+                    <div class="product-card-actions">
+                        <form action="{{ url_for('main.add_to_cart') }}" method="POST" class="add-to-cart-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="product-action-btn" title="Add to Cart">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-brand">{{ product.brand }}</div>
+                    <h3 class="product-card-name">
+                        <a href="{{ url_for('main.product_detail', slug=product.slug) }}">{{ product.name }}</a>
+                    </h3>
+                    <div class="product-card-price">
+                        <span class="price-current">₵{{ "%.2f"|format(product.price) }}</span>
+                        {% if product.compare_price and product.compare_price > product.price %}
+                        <span class="price-compare">₵{{ "%.2f"|format(product.compare_price) }}</span>
+                        {% endif %}
+                    </div>
+                    {% if product.review_count > 0 %}
+                    <div class="product-card-rating">
+                        <span class="stars">{% for i in range(5) %}{% if i < product.average_rating|int %}&#9733;{% else %}&#9734;{% endif %}{% endfor %}</span>
+                        <span class="rating-count">({{ product.review_count }})</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.shop') }}" class="btn btn-outline">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Testimonials</div>
+            <h2 class="section-title">What Our Clients Say</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"The craftsmanship is impeccable. My Apex Pro feels like wearing the future on my wrist. The attention to detail is extraordinary."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">JR</div>
+                    <div>
+                        <div class="testimonial-name">James Richardson</div>
+                        <div class="testimonial-role">Tech Executive</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"I've owned luxury watches my entire life, and this smart watch rivals the best of them in both aesthetics and functionality."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SM</div>
+                    <div>
+                        <div class="testimonial-name">Sarah Mitchell</div>
+                        <div class="testimonial-role">Fashion Designer</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"The perfect blend of classic watchmaking and modern technology. Customer service was exceptional — truly a premium experience."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">DK</div>
+                    <div>
+                        <div class="testimonial-name">David Kim</div>
+                        <div class="testimonial-role">Entrepreneur</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Arrivals -->
+{% if latest %}
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Just Arrived</div>
+            <h2 class="section-title">Latest Additions</h2>
+        </div>
+        <div class="product-grid">
+            {% for product in latest %}
+            <div class="product-card animate-on-scroll">
+                <div class="product-card-img">
+                    <a href="{{ url_for('main.product_detail', slug=product.slug) }}">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                    </a>
+                    <span class="product-badge">New</span>
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-brand">{{ product.brand }}</div>
+                    <h3 class="product-card-name">
+                        <a href="{{ url_for('main.product_detail', slug=product.slug) }}">{{ product.name }}</a>
+                    </h3>
+                    <div class="product-card-price">
+                        <span class="price-current">₵{{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

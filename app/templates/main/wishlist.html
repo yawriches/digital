@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Wishlist{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">My Wishlist</h1>
+        <p class="page-subtitle">{{ items|length }} item{{ 's' if items|length != 1 else '' }} saved</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        {% if items %}
+        <div class="wishlist-grid">
+            {% for wi in items %}
+            <div class="product-card">
+                <div class="product-card-img">
+                    <a href="{{ url_for('main.product_detail', slug=wi.product.slug) }}">
+                        <img src="{{ wi.product.image_url }}" alt="{{ wi.product.name }}">
+                    </a>
+                    <div class="product-card-actions" style="opacity: 1; transform: none;">
+                        <form action="{{ url_for('main.toggle_wishlist') }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="product_id" value="{{ wi.product.id }}">
+                            <button type="submit" class="product-action-btn" title="Remove from Wishlist" style="background: var(--danger);">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-brand">{{ wi.product.brand }}</div>
+                    <h3 class="product-card-name">
+                        <a href="{{ url_for('main.product_detail', slug=wi.product.slug) }}">{{ wi.product.name }}</a>
+                    </h3>
+                    <div class="product-card-price">
+                        <span class="price-current">₵{{ "%.2f"|format(wi.product.price) }}</span>
+                    </div>
+                    <form action="{{ url_for('main.add_to_cart') }}" method="POST" class="add-to-cart-form" style="margin-top: 12px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="product_id" value="{{ wi.product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">&#10084;</div>
+            <h3 class="empty-title">Your wishlist is empty</h3>
+            <p class="empty-desc">Save your favorite watches for later.</p>
+            <a href="{{ url_for('main.shop') }}" class="btn btn-primary">Explore Watches</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

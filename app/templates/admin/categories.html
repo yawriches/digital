@@ -1,0 +1,88 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Categories{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">Categories</h1>
+</div>
+
+<!-- Add Category Form -->
+<div class="category-form-inline">
+    <h4 style="font-family: var(--font-heading); letter-spacing: 0.08em; margin-bottom: 16px;">Add New Category</h4>
+    <form method="POST" action="{{ url_for('admin.add_category') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-input" placeholder="Category name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Image URL</label>
+                <input type="url" name="image_url" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group full">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="form-input" placeholder="Brief description">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Add Category</button>
+    </form>
+</div>
+
+<!-- Categories List -->
+<div style="overflow-x: auto;">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Products</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+            <tr>
+                <td>
+                    {% if cat.image_url %}
+                    <img src="{{ cat.image_url }}" alt="{{ cat.name }}">
+                    {% else %}
+                    <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td style="font-weight: 500;">{{ cat.name }}</td>
+                <td class="text-muted">{{ cat.slug }}</td>
+                <td>{{ cat.products.count() }}</td>
+                <td>{{ '✓' if cat.is_active else '✗' }}</td>
+                <td>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <form action="{{ url_for('admin.edit_category', cat_id=cat.id) }}" method="POST" style="display: inline-flex; gap: 6px; align-items: center;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="name" value="{{ cat.name }}">
+                            <input type="hidden" name="description" value="{{ cat.description }}">
+                            <input type="hidden" name="image_url" value="{{ cat.image_url }}">
+                            {% if cat.is_active %}
+                            <button type="submit" name="is_active" value="" class="btn btn-sm btn-outline">Deactivate</button>
+                            {% else %}
+                            <button type="submit" name="is_active" value="1" class="btn btn-sm btn-primary">Activate</button>
+                            {% endif %}
+                        </form>
+                        {% if cat.products.count() == 0 %}
+                        <form action="{{ url_for('admin.delete_category', cat_id=cat.id) }}" method="POST" onsubmit="return confirm('Delete this category?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not categories %}
+            <tr><td colspan="6" class="text-center text-muted" style="padding: 32px;">No categories yet</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

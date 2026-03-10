@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="admin-sidebar-title">Admin Panel</div>
+            <p class="text-muted" style="font-size: 0.75rem; margin-top: 4px;">{{ current_user.full_name }}</p>
+        </div>
+        <nav class="admin-nav">
+            <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('admin.products') }}" class="{{ 'active' if 'product' in request.endpoint }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                Products
+            </a>
+            <a href="{{ url_for('admin.orders') }}" class="{{ 'active' if 'order' in request.endpoint }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Orders
+            </a>
+            <a href="{{ url_for('admin.customers') }}" class="{{ 'active' if 'customer' in request.endpoint }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Customers
+            </a>
+            <a href="{{ url_for('admin.categories') }}" class="{{ 'active' if 'categor' in request.endpoint }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                Categories
+            </a>
+            <a href="{{ url_for('main.index') }}" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                Back to Store
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Mobile Nav -->
+    <div class="admin-mobile-nav">
+        <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">Dashboard</a>
+        <a href="{{ url_for('admin.products') }}" class="{{ 'active' if 'product' in request.endpoint }}">Products</a>
+        <a href="{{ url_for('admin.orders') }}" class="{{ 'active' if 'order' in request.endpoint }}">Orders</a>
+        <a href="{{ url_for('admin.customers') }}" class="{{ 'active' if 'customer' in request.endpoint }}">Customers</a>
+        <a href="{{ url_for('admin.categories') }}" class="{{ 'active' if 'categor' in request.endpoint }}">Categories</a>
+        <a href="{{ url_for('main.index') }}">Store</a>
+    </div>
+
+    <!-- Content -->
+    <div class="admin-content">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

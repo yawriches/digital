@@ -1,0 +1,86 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Order {{ order.order_number }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">Order {{ order.order_number }}</h1>
+    <a href="{{ url_for('admin.orders') }}" class="btn btn-outline">Back to Orders</a>
+</div>
+
+<div class="order-detail-grid">
+    <div class="order-detail-card">
+        <h4>Order Information</h4>
+        <p>
+            <strong>Order #:</strong> {{ order.order_number }}<br>
+            <strong>Date:</strong> {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}<br>
+            <strong>Payment Ref:</strong> {{ order.payment_reference or 'N/A' }}<br>
+            <strong>Payment:</strong> <span class="status-badge status-{{ order.payment_status }}">{{ order.payment_status }}</span>
+        </p>
+    </div>
+    <div class="order-detail-card">
+        <h4>Customer</h4>
+        <p>
+            <strong>Name:</strong> {{ order.customer.full_name }}<br>
+            <strong>Email:</strong> {{ order.customer.email }}<br>
+            <strong>Phone:</strong> {{ order.shipping_phone }}
+        </p>
+    </div>
+    <div class="order-detail-card">
+        <h4>Shipping Address</h4>
+        <p>
+            {{ order.shipping_address }}<br>
+            {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}<br>
+            {{ order.shipping_country }}
+        </p>
+    </div>
+    <div class="order-detail-card">
+        <h4>Update Status</h4>
+        <form action="{{ url_for('admin.update_order_status', order_id=order.id) }}" method="POST" class="status-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="status">
+                <option value="pending" {{ 'selected' if order.status == 'pending' }}>Pending</option>
+                <option value="processing" {{ 'selected' if order.status == 'processing' }}>Processing</option>
+                <option value="shipped" {{ 'selected' if order.status == 'shipped' }}>Shipped</option>
+                <option value="delivered" {{ 'selected' if order.status == 'delivered' }}>Delivered</option>
+                <option value="cancelled" {{ 'selected' if order.status == 'cancelled' }}>Cancelled</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+        </form>
+        <p style="margin-top: 12px;">Current: <span class="status-badge status-{{ order.status }}">{{ order.status }}</span></p>
+    </div>
+</div>
+
+<div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden;">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                        <span>{{ item.product.name }}</span>
+                    </div>
+                </td>
+                <td>₵{{ "%.2f"|format(item.price) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td class="text-gold">₵{{ "%.2f"|format(item.price * item.quantity) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="padding: 20px; text-align: right;">
+        <div class="summary-row total" style="justify-content: flex-end; gap: 40px;">
+            <span>Total</span>
+            <span>₵{{ "%.2f"|format(order.total_amount) }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

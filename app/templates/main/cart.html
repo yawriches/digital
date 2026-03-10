@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">Shopping Cart</h1>
+        <p class="page-subtitle">{{ cart_items|length }} item{{ 's' if cart_items|length != 1 else '' }} in your cart</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        {% if cart_items %}
+        <div class="cart-layout">
+            <div>
+                {% for entry in cart_items %}
+                <div class="cart-item">
+                    <div class="cart-item-img">
+                        <img src="{{ entry.product.image_url }}" alt="{{ entry.product.name }}">
+                    </div>
+                    <div class="cart-item-info">
+                        <h3><a href="{{ url_for('main.product_detail', slug=entry.product.slug) }}">{{ entry.product.name }}</a></h3>
+                        <p>{{ entry.product.brand }}</p>
+                        <p class="text-gold" style="margin-top: 4px;">₵{{ "%.2f"|format(entry.product.price) }}</p>
+                    </div>
+                    <div class="cart-item-price">₵{{ "%.2f"|format(entry.product.price) }}</div>
+                    <div class="cart-item-qty">
+                        <form action="{{ url_for('main.update_cart') }}" method="POST" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="product_id" value="{{ entry.product.id }}">
+                            <div class="quantity-selector" style="margin: 0;">
+                                <button type="button" class="qty-btn" data-action="decrease" style="width: 32px; height: 32px; font-size: 1rem;">-</button>
+                                <input type="number" name="quantity" value="{{ entry.quantity }}" min="1" class="qty-input" style="width: 44px; height: 32px; font-size: 0.85rem;">
+                                <button type="button" class="qty-btn" data-action="increase" style="width: 32px; height: 32px; font-size: 1rem;">+</button>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-outline">Update</button>
+                        </form>
+                    </div>
+                    <div class="cart-item-subtotal">₵{{ "%.2f"|format(entry.subtotal) }}</div>
+                    <form action="{{ url_for('main.remove_from_cart') }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="product_id" value="{{ entry.product.id }}">
+                        <button type="submit" class="cart-remove" title="Remove">&times;</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₵{{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>{% if total >= 500 %}Free{% else %}₵25.00{% endif %}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₵{{ "%.2f"|format(total + (0 if total >= 500 else 25)) }}</span>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.checkout') }}" class="btn btn-primary btn-block mt-3">Proceed to Checkout</a>
+                {% else %}
+                <a href="{{ url_for('auth.login', next=url_for('main.checkout')) }}" class="btn btn-primary btn-block mt-3">Sign In to Checkout</a>
+                {% endif %}
+                <a href="{{ url_for('main.shop') }}" class="btn btn-outline btn-block mt-2">Continue Shopping</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">&#128722;</div>
+            <h3 class="empty-title">Your cart is empty</h3>
+            <p class="empty-desc">Looks like you haven't added any watches yet.</p>
+            <a href="{{ url_for('main.shop') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

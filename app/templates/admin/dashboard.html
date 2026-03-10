@@ -1,0 +1,101 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">Dashboard</h1>
+    <span class="text-muted">Overview of your store</span>
+</div>
+
+<!-- KPI Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value gold">${{ "%.2f"|format(total_revenue) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value">{{ total_orders }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Customers</div>
+        <div class="stat-value">{{ total_customers }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Products</div>
+        <div class="stat-value">{{ total_products }}</div>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="stat-card">
+        <div class="stat-label">Pending Orders</div>
+        <div class="stat-value" style="color: var(--warning);">{{ pending_orders }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Low Stock Products</div>
+        <div class="stat-value" style="color: var(--danger);">{{ low_stock }}</div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px;">
+    <div class="chart-container">
+        <div class="chart-title">Revenue (Last 7 Days)</div>
+        <canvas id="revenueChart" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-container">
+        <div class="chart-title">Order Status</div>
+        <canvas id="statusChart" class="chart-canvas"></canvas>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="chart-container">
+    <div class="chart-title">Recent Orders</div>
+    <div style="overflow-x: auto;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td style="font-weight: 600;">{{ order.order_number }}</td>
+                    <td>{{ order.customer.full_name }}</td>
+                    <td class="text-gold">${{ "%.2f"|format(order.total_amount) }}</td>
+                    <td><span class="status-badge status-{{ order.status }}">{{ order.status }}</span></td>
+                    <td><span class="status-badge status-{{ order.payment_status }}">{{ order.payment_status }}</span></td>
+                    <td>{{ order.created_at.strftime('%b %d') }}</td>
+                    <td><a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline">View</a></td>
+                </tr>
+                {% endfor %}
+                {% if not recent_orders %}
+                <tr><td colspan="7" class="text-center text-muted" style="padding: 32px;">No orders yet</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    drawRevenueChart('revenueChart', {{ labels|tojson }}, {{ revenue_data|tojson }});
+    drawStatusChart('statusChart', {{ status_counts|tojson }});
+});
+window.addEventListener('resize', function() {
+    drawRevenueChart('revenueChart', {{ labels|tojson }}, {{ revenue_data|tojson }});
+    drawStatusChart('statusChart', {{ status_counts|tojson }});
+});
+</script>
+{% endblock %}

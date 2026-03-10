@@ -1,0 +1,68 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Orders{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">Orders</h1>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-sm {{ 'btn-primary' if not status_filter else 'btn-outline' }}">All</a>
+        <a href="{{ url_for('admin.orders', status='pending') }}" class="btn btn-sm {{ 'btn-primary' if status_filter == 'pending' else 'btn-outline' }}">Pending</a>
+        <a href="{{ url_for('admin.orders', status='processing') }}" class="btn btn-sm {{ 'btn-primary' if status_filter == 'processing' else 'btn-outline' }}">Processing</a>
+        <a href="{{ url_for('admin.orders', status='shipped') }}" class="btn btn-sm {{ 'btn-primary' if status_filter == 'shipped' else 'btn-outline' }}">Shipped</a>
+        <a href="{{ url_for('admin.orders', status='delivered') }}" class="btn btn-sm {{ 'btn-primary' if status_filter == 'delivered' else 'btn-outline' }}">Delivered</a>
+        <a href="{{ url_for('admin.orders', status='cancelled') }}" class="btn btn-sm {{ 'btn-primary' if status_filter == 'cancelled' else 'btn-outline' }}">Cancelled</a>
+    </div>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders.items %}
+            <tr>
+                <td style="font-weight: 600;">{{ order.order_number }}</td>
+                <td>{{ order.customer.full_name }}</td>
+                <td class="text-muted">{{ order.customer.email }}</td>
+                <td class="text-gold">₵{{ "%.2f"|format(order.total_amount) }}</td>
+                <td><span class="status-badge status-{{ order.status }}">{{ order.status }}</span></td>
+                <td><span class="status-badge status-{{ order.payment_status }}">{{ order.payment_status }}</span></td>
+                <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                <td><a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline">View</a></td>
+            </tr>
+            {% endfor %}
+            {% if not orders.items %}
+            <tr><td colspan="8" class="text-center text-muted" style="padding: 32px;">No orders found</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% if orders.pages > 1 %}
+<div class="pagination">
+    {% if orders.has_prev %}
+    <a href="{{ url_for('admin.orders', page=orders.prev_num, status=status_filter) }}">Prev</a>
+    {% endif %}
+    {% for page_num in orders.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if page_num %}
+            <a href="{{ url_for('admin.orders', page=page_num, status=status_filter) }}" class="{{ 'active' if page_num == orders.page }}">{{ page_num }}</a>
+        {% else %}
+            <span>...</span>
+        {% endif %}
+    {% endfor %}
+    {% if orders.has_next %}
+    <a href="{{ url_for('admin.orders', page=orders.next_num, status=status_filter) }}">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

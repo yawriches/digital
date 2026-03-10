@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="product-detail">
+        <!-- Gallery -->
+        <div class="product-gallery">
+            <div class="gallery-main">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" id="galleryMain">
+            </div>
+            <div class="gallery-thumbs">
+                <div class="gallery-thumb active" data-src="{{ product.image_url }}">
+                    <img src="{{ product.image_url }}" alt="View 1">
+                </div>
+                {% if product.image_url_2 %}
+                <div class="gallery-thumb" data-src="{{ product.image_url_2 }}">
+                    <img src="{{ product.image_url_2 }}" alt="View 2">
+                </div>
+                {% endif %}
+                {% if product.image_url_3 %}
+                <div class="gallery-thumb" data-src="{{ product.image_url_3 }}">
+                    <img src="{{ product.image_url_3 }}" alt="View 3">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            <div class="product-breadcrumb">
+                <a href="{{ url_for('main.index') }}">Home</a> /
+                <a href="{{ url_for('main.shop') }}">Shop</a> /
+                <a href="{{ url_for('main.shop', category=product.category.slug) }}">{{ product.category.name }}</a> /
+                {{ product.name }}
+            </div>
+
+            <div class="product-brand-label">{{ product.brand }}</div>
+            <h1 class="product-title">{{ product.name }}</h1>
+
+            <div class="product-price-block">
+                <span class="product-price">₵{{ "%.2f"|format(product.price) }}</span>
+                {% if product.compare_price and product.compare_price > product.price %}
+                <span class="product-compare-price">₵{{ "%.2f"|format(product.compare_price) }}</span>
+                <span class="product-discount-badge">-{{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            {% if product.review_count > 0 %}
+            <div class="product-rating-block">
+                <span class="stars">{% for i in range(5) %}{% if i < product.average_rating|int %}&#9733;{% else %}&#9734;{% endif %}{% endfor %}</span>
+                <span class="text-muted">{{ product.average_rating }} ({{ product.review_count }} review{{ 's' if product.review_count != 1 }})</span>
+            </div>
+            {% endif %}
+
+            <p class="product-desc">{{ product.description }}</p>
+
+            {% if product.specifications %}
+            <div class="product-specs">
+                <h4 style="margin-bottom: 8px; font-family: var(--font-heading); letter-spacing: 0.08em;">Specifications</h4>
+                <p>{{ product.specifications }}</p>
+            </div>
+            {% endif %}
+
+            <div class="product-stock">
+                {% if product.stock > 10 %}
+                <span class="stock-in">&#10003; In Stock</span>
+                {% elif product.stock > 0 %}
+                <span class="stock-low">&#9888; Only {{ product.stock }} left in stock</span>
+                {% else %}
+                <span class="stock-out">&#10007; Out of Stock</span>
+                {% endif %}
+            </div>
+
+            {% if product.stock > 0 %}
+            <form action="{{ url_for('main.add_to_cart') }}" method="POST" class="add-to-cart-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" data-action="decrease">-</button>
+                    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="qty-input">
+                    <button type="button" class="qty-btn" data-action="increase">+</button>
+                </div>
+
+                <div class="product-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('main.toggle_wishlist') }}" method="POST" class="wishlist-form" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button type="submit" class="btn btn-outline {{ 'active' if in_wishlist }}" title="{{ 'Remove from Wishlist' if in_wishlist else 'Add to Wishlist' }}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ 'currentColor' if in_wishlist else 'none' }}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            {{ 'Wishlisted' if in_wishlist else 'Wishlist' }}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </form>
+            {% endif %}
+
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+                <p class="text-muted" style="font-size: 0.8rem;">SKU: {{ product.sku }}</p>
+                <p class="text-muted" style="font-size: 0.8rem;">Category: {{ product.category.name }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related %}
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">You May Also Like</div>
+            <h2 class="section-title">Related Watches</h2>
+        </div>
+        <div class="product-grid">
+            {% for p in related %}
+            <div class="product-card">
+                <div class="product-card-img">
+                    <a href="{{ url_for('main.product_detail', slug=p.slug) }}">
+                        <img src="{{ p.image_url }}" alt="{{ p.name }}">
+                    </a>
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-brand">{{ p.brand }}</div>
+                    <h3 class="product-card-name">
+                        <a href="{{ url_for('main.product_detail', slug=p.slug) }}">{{ p.name }}</a>
+                    </h3>
+                    <div class="product-card-price">
+                        <span class="price-current">₵{{ "%.2f"|format(p.price) }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Reviews Section -->
+<section class="section">
+    <div class="container">
+        <div class="reviews-section">
+            <h2 class="section-title mb-3">Customer Reviews</h2>
+
+            {% if reviews %}
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div>
+                        <span class="review-author">{{ review.author.full_name }}</span>
+                        <div class="stars" style="font-size: 0.85rem;">{% for i in range(5) %}{% if i < review.rating %}&#9733;{% else %}&#9734;{% endif %}{% endfor %}</div>
+                    </div>
+                    <span class="review-date">{{ review.created_at.strftime('%b %d, %Y') }}</span>
+                </div>
+                {% if review.title %}
+                <div class="review-title">{{ review.title }}</div>
+                {% endif %}
+                <p class="review-text">{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted mb-3">No reviews yet. Be the first to review this product!</p>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <div class="review-form">
+                <h4 style="margin-bottom: 16px; font-family: var(--font-heading); letter-spacing: 0.08em;">Write a Review</h4>
+                <form action="{{ url_for('main.add_review', product_id=product.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                    <div class="form-group">
+                        <label class="form-label">Rating</label>
+                        <div class="star-rating" style="direction: rtl; display: inline-flex;">
+                            <input type="radio" name="star" id="star5" value="5" checked>
+                            <label for="star5">&#9733;</label>
+                            <input type="radio" name="star" id="star4" value="4">
+                            <label for="star4">&#9733;</label>
+                            <input type="radio" name="star" id="star3" value="3">
+                            <label for="star3">&#9733;</label>
+                            <input type="radio" name="star" id="star2" value="2">
+                            <label for="star2">&#9733;</label>
+                            <input type="radio" name="star" id="star1" value="1">
+                            <label for="star1">&#9733;</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-input" placeholder="Summary of your review">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Review</label>
+                        <textarea name="comment" class="form-textarea" placeholder="Share your thoughts..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+            {% else %}
+            <p class="text-muted mt-2"><a href="{{ url_for('auth.login') }}">Sign in</a> to write a review.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">Order {{ order.order_number }}</h1>
+        <p class="page-subtitle">Placed on {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="order-detail-grid">
+            <div class="order-detail-card">
+                <h4>Order Status</h4>
+                <p><span class="status-badge status-{{ order.status }}">{{ order.status }}</span></p>
+                <p style="margin-top: 8px;">Payment: <span class="status-badge status-{{ order.payment_status }}">{{ order.payment_status }}</span></p>
+                {% if order.payment_reference %}
+                <p style="margin-top: 8px; font-size: 0.8rem;">Ref: {{ order.payment_reference }}</p>
+                {% endif %}
+            </div>
+            <div class="order-detail-card">
+                <h4>Shipping Address</h4>
+                <p>{{ order.shipping_address }}<br>
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}<br>
+                {{ order.shipping_country }}<br>
+                Phone: {{ order.shipping_phone }}</p>
+            </div>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden;">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius);">
+                                <span>{{ item.product.name }}</span>
+                            </div>
+                        </td>
+                        <td>₵{{ "%.2f"|format(item.price) }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td class="text-gold">₵{{ "%.2f"|format(item.price * item.quantity) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="padding: 20px; text-align: right;">
+                <div class="summary-row total" style="justify-content: flex-end; gap: 40px;">
+                    <span>Total</span>
+                    <span>₵{{ "%.2f"|format(order.total_amount) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <a href="{{ url_for('main.order_history') }}" class="btn btn-outline">Back to Orders</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
