@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smartwatches-ecommerce"
+version = "1.0.0"
+description = "Smart Watches E-commerce Platform with Flask and Paystack"
+authors = [
+    {name = "Smart Watches Team", email = "admin@smartwatches.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "Flask==2.3.3",
+    "Flask-SQLAlchemy>=3.0.5",
+    "Flask-Login==0.6.3",
+    "Flask-WTF==1.1.1",
+    "Flask-Migrate==4.0.5",
+    "SQLAlchemy>=2.0.36",
+    "bcrypt==4.0.1",
+    "python-dotenv==1.0.0",
+    "requests==2.31.0",
+    "Werkzeug==2.3.7",
+    "psycopg2-binary>=2.9.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/yawriches/digital"
+Repository = "https://github.com/yawriches/digital.git"
+Issues = "https://github.com/yawriches/digital/issues"
+
+[project.scripts]
+smartwatches = "app:create_app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-flask>=1.0",
+    "black>=22.0",
+    "flake8>=4.0",
+    "mypy>=0.900",
+]
