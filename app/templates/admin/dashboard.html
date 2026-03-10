@@ -88,14 +88,30 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Chart Data -->
+<script id="chart-data" type="application/json">
+{
+    "labels": {{ labels|tojson|safe }},
+    "revenueData": {{ revenue_data|tojson|safe }},
+    "statusCounts": {{ status_counts|tojson|safe }}
+}
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    drawRevenueChart('revenueChart', {{ labels|tojson }}, {{ revenue_data|tojson }});
-    drawStatusChart('statusChart', {{ status_counts|tojson }});
+    var chartDataElement = document.getElementById('chart-data');
+    var chartData = JSON.parse(chartDataElement.textContent);
+    
+    drawRevenueChart('revenueChart', chartData.labels, chartData.revenueData);
+    drawStatusChart('statusChart', chartData.statusCounts);
 });
+
 window.addEventListener('resize', function() {
-    drawRevenueChart('revenueChart', {{ labels|tojson }}, {{ revenue_data|tojson }});
-    drawStatusChart('statusChart', {{ status_counts|tojson }});
+    var chartDataElement = document.getElementById('chart-data');
+    var chartData = JSON.parse(chartDataElement.textContent);
+    
+    drawRevenueChart('revenueChart', chartData.labels, chartData.revenueData);
+    drawStatusChart('statusChart', chartData.statusCounts);
 });
 </script>
 {% endblock %}
