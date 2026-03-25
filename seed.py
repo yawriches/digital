@@ -108,7 +108,7 @@ def seed():
                 stock=40,
                 sku='SW-VANG-003',
                 category_id=categories['smart'].id,
-                image_url='https://images.unsplash.com/photo-1546868871-af0de0ae72be?w=600&q=80',
+                image_url='https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&q=80',
                 image_url_2='https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&q=80',
                 image_url_3='https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=600&q=80',
                 is_featured=True,

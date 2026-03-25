@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: smartwatches-ecommerce
+    env: python
+    buildCommand: pip install -r requirements.txt && python -c "from app import create_app; from app.extensions import db; app = create_app(); app.app_context().push(); db.create_all()"
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smartwatches-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+
+databases:
+  - name: smartwatches-db
+    databaseName: smartwatches
+    user: smartwatches_user
