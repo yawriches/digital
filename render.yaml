@@ -2,8 +2,9 @@ services:
   - type: web
     name: smartwatches-ecommerce
     env: python
+    region: oregon
     buildCommand: pip install -r requirements.txt && python -c "from app import create_app; from app.extensions import db; app = create_app(); app.app_context().push(); db.create_all()"
-    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    startCommand: gunicorn --bind 0.0.0.0:$PORT wsgi:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
