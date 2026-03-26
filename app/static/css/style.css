@@ -2,33 +2,44 @@
    SMART WATCHES - Light/Dark Theme System
    ========================================== */
 
-/* Default Light Theme */
+/* Enhanced Light Theme */
 :root {
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --bg-card: #ffffff;
     --bg-elevated: #ffffff;
     --bg-input: #ffffff;
-    --border-color: #e0e0e0;
-    --border-light: #f0f0f0;
+    --bg-hover: #f1f3f5;
+    --bg-active: #e9ecef;
+    --border-color: #dee2e6;
+    --border-light: #f1f3f5;
+    --border-focus: #c8a45e;
     --text-primary: #212529;
     --text-secondary: #6c757d;
-    --text-muted: #adb5bd;
+    --text-muted: #868e96;
+    --text-inverse: #ffffff;
     --gold: #c8a45e;
     --gold-light: #d4b96e;
     --gold-dark: #a88a3e;
+    --gold-bg: #fdf5e6;
     --accent: #c8a45e;
+    --accent-hover: #a88a3e;
     --danger: #dc3545;
+    --danger-light: #f8d7da;
     --success: #28a745;
+    --success-light: #d4edda;
     --info: #007bff;
+    --info-light: #d1ecf1;
     --warning: #ffc107;
+    --warning-light: #fff3cd;
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', -apple-system, sans-serif;
     --font-heading: 'Bebas Neue', Impact, sans-serif;
-    --shadow: 0 4px 24px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
-    --radius: 4px;
-    --radius-lg: 8px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --shadow-xl: 0 12px 40px rgba(0,0,0,0.15);
+    --radius: 6px;
+    --radius-lg: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -39,21 +50,32 @@
     --bg-card: #161616;
     --bg-elevated: #1a1a1a;
     --bg-input: #1e1e1e;
+    --bg-hover: #1f1f1f;
+    --bg-active: #252525;
     --border-color: #2a2a2a;
     --border-light: #333333;
+    --border-focus: #c8a45e;
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
     --text-muted: #666666;
+    --text-inverse: #212529;
     --gold: #c8a45e;
     --gold-light: #d4b96e;
     --gold-dark: #a88a3e;
+    --gold-bg: #2a2416;
     --accent: #c8a45e;
+    --accent-hover: #a88a3e;
     --danger: #e74c3c;
+    --danger-light: #4a1f1f;
     --success: #27ae60;
+    --success-light: #1a3a2a;
     --info: #3498db;
+    --info-light: #1a2a4a;
     --warning: #f39c12;
+    --warning-light: #4a3a1a;
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
     --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+    --shadow-xl: 0 12px 40px rgba(0,0,0,0.8);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
