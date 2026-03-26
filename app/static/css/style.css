@@ -1,81 +1,34 @@
 /* ==========================================
-   SMART WATCHES - Light/Dark Theme System
+   SMART WATCHES - Premium Dark Theme
    ========================================== */
 
-/* Enhanced Light Theme */
 :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-card: #ffffff;
-    --bg-elevated: #ffffff;
-    --bg-input: #ffffff;
-    --bg-hover: #f1f3f5;
-    --bg-active: #e9ecef;
-    --border-color: #dee2e6;
-    --border-light: #f1f3f5;
-    --border-focus: #c8a45e;
-    --text-primary: #212529;
-    --text-secondary: #6c757d;
-    --text-muted: #868e96;
-    --text-inverse: #ffffff;
-    --gold: #c8a45e;
-    --gold-light: #d4b96e;
-    --gold-dark: #a88a3e;
-    --gold-bg: #fdf5e6;
-    --accent: #c8a45e;
-    --accent-hover: #a88a3e;
-    --danger: #dc3545;
-    --danger-light: #f8d7da;
-    --success: #28a745;
-    --success-light: #d4edda;
-    --info: #007bff;
-    --info-light: #d1ecf1;
-    --warning: #ffc107;
-    --warning-light: #fff3cd;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'Inter', -apple-system, sans-serif;
-    --font-heading: 'Bebas Neue', Impact, sans-serif;
-    --shadow: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-    --shadow-xl: 0 12px 40px rgba(0,0,0,0.15);
-    --radius: 6px;
-    --radius-lg: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Dark Theme */
-[data-theme="dark"] {
     --bg-primary: #0a0a0a;
     --bg-secondary: #111111;
     --bg-card: #161616;
     --bg-elevated: #1a1a1a;
     --bg-input: #1e1e1e;
-    --bg-hover: #1f1f1f;
-    --bg-active: #252525;
     --border-color: #2a2a2a;
     --border-light: #333333;
-    --border-focus: #c8a45e;
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
     --text-muted: #666666;
-    --text-inverse: #212529;
     --gold: #c8a45e;
     --gold-light: #d4b96e;
     --gold-dark: #a88a3e;
-    --gold-bg: #2a2416;
     --accent: #c8a45e;
-    --accent-hover: #a88a3e;
     --danger: #e74c3c;
-    --danger-light: #4a1f1f;
     --success: #27ae60;
-    --success-light: #1a3a2a;
     --info: #3498db;
-    --info-light: #1a2a4a;
     --warning: #f39c12;
-    --warning-light: #4a3a1a;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Bebas Neue', Impact, sans-serif;
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
     --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
-    --shadow-xl: 0 12px 40px rgba(0,0,0,0.8);
+    --radius: 4px;
+    --radius-lg: 8px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -844,114 +797,6 @@ img { max-width: 100%; height: auto; }
 }
 .page-title { font-family: var(--font-display); font-size: 2.2rem; margin-bottom: 8px; }
 .page-subtitle { color: var(--text-muted); font-size: 0.95rem; }
-
-/* Theme Toggle Button */
-.theme-toggle {
-    position: relative;
-    width: 50px;
-    height: 24px;
-    background: var(--border-color);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: var(--transition);
-    border: 1px solid var(--border-light);
-}
-
-.theme-toggle:hover {
-    background: var(--gold);
-}
-
-.theme-toggle-slider {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    background: white;
-    border-radius: 50%;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-}
-
-[data-theme="dark"] .theme-toggle-slider {
-    left: 28px;
-    background: var(--gold);
-}
-
-.theme-toggle-slider::before {
-    content: "☀️";
-}
-
-[data-theme="dark"] .theme-toggle-slider::before {
-    content: "🌙";
-}
-
-/* WhatsApp Widget */
-.whatsapp-widget {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.whatsapp-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    background: #25D366;
-    border-radius: 50%;
-    color: white;
-    font-size: 28px;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-    transition: var(--transition);
-    animation: whatsapp-bounce 2s infinite;
-}
-
-.whatsapp-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-    color: white;
-}
-
-@keyframes whatsapp-bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
-}
-
-.whatsapp-tooltip {
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    background: var(--bg-card);
-    color: var(--text-primary);
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-    white-space: nowrap;
-    font-size: 14px;
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
-}
-
-.whatsapp-widget:hover .whatsapp-tooltip {
-    opacity: 1;
-    visibility: visible;
-}
 
 .order-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
 .order-detail-card {
